@@ -31,14 +31,31 @@ export function firstText(doc: Document, selectors: string[]): string | undefine
   return undefined;
 }
 
-export function pickVideo(doc: Document): HTMLVideoElement | null {
-  const vids = Array.from(doc.querySelectorAll("video"));
-  return (
-    vids.find((v) => v.classList.contains("html5-main-video")) ??
-    vids.find((v) => v.currentSrc || v.src || v.readyState > 0) ??
-    vids[0] ??
-    null
-  );
+/**
+ * YouTube keeps several `video.html5-main-video` elements in the page at once: the home-page masthead ad, the
+ * hover-preview player, and the real watch player. After you click a video on the home page the other two stay in
+ * the DOM (paused, and the masthead comes first), so "the first one" reports Paused for the whole video.
+ */
+const NOT_THE_MAIN_PLAYER = "#masthead-player, ytd-video-masthead-ad-primary-video-renderer, ytd-video-preview, #inline-preview-player";
+
+export function pickVideo(doc: Document, preferWithin?: string): HTMLVideoElement | null {
+  const all = Array.from(doc.querySelectorAll("video"));
+  if (all.length === 0) return null;
+  let pool = all.filter((v) => !v.closest(NOT_THE_MAIN_PLAYER));
+  if (pool.length === 0) pool = all;
+  // The element inside the active container (e.g. the current Short), else inside the main watch player.
+  const preferred = preferWithin ? pool.filter((v) => v.closest(preferWithin)) : [];
+  if (preferred.length) pool = preferred;
+  else {
+    const inMain = pool.filter((v) => v.closest("#movie_player"));
+    if (inMain.length) pool = inMain;
+  }
+  const score = (v: HTMLVideoElement) =>
+    (!v.paused && !v.ended ? 8 : 0) +
+    (v.classList.contains("html5-main-video") ? 4 : 0) +
+    (Number.isFinite(v.duration) && v.duration > 0 ? 2 : 0) +
+    (v.readyState > 0 ? 1 : 0);
+  return [...pool].sort((a, b) => score(b) - score(a))[0] ?? null;
 }
 
 export function playbackOf(v: HTMLVideoElement | null, adShowing = false) {

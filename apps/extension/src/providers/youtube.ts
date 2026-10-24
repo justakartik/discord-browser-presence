@@ -33,7 +33,8 @@ export class YouTubeProvider implements MediaProvider {
   read({ doc, url, now }: ProviderEnv): MediaState | null {
     const id = youtubeVideoId(url.toString());
     if (!id) return null; // not on a video/short/live page
-    const video = pickVideo(doc);
+    // On Shorts there is one <video> per Short; use the active one.
+    const video = pickVideo(doc, url.pathname.startsWith("/shorts/") ? "ytd-reel-video-renderer[is-active]" : undefined);
     if (!video) return null;
 
     // Staleness guard: on SPA navigation the watch element's video-id attribute updates

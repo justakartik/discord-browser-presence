@@ -3,6 +3,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { YouTubeProvider } from "../apps/extension/src/providers/youtube";
 import { YouTubeMusicProvider, parseByline } from "../apps/extension/src/providers/youtubeMusic";
 import { MediaMonitor } from "../apps/extension/src/content/monitor";
+import { pickVideo } from "../apps/extension/src/providers/types";
 
 const ID = "dQw4w9WgXcQ";
 const env = (url: string, now = 1000) => ({ doc: document, url: new URL(url), now });
@@ -181,3 +182,51 @@ describe("MediaMonitor", () => {
   });
 });
 void vi;
+
+describe("choosing the right <video> (regression: 'paused' while playing after clicking from the home page)", () => {
+  const ID2 = "dQw4w9WgXcQ";
+  function mkVideo(parentSelector: string | null, o: { paused: boolean; duration?: number }) {
+    const v = document.createElement("video");
+    v.className = "video-stream html5-main-video";
+    Object.defineProperty(v, "paused", { value: o.paused, configurable: true });
+    Object.defineProperty(v, "ended", { value: false, configurable: true });
+    Object.defineProperty(v, "duration", { value: o.duration ?? 200, configurable: true });
+    Object.defineProperty(v, "currentTime", { value: 12, configurable: true });
+    Object.defineProperty(v, "readyState", { value: 4, configurable: true });
+    return v;
+  }
+  /** Mirrors YouTube after navigating home -> watch: masthead ad player (first, paused), real player, hover preview. */
+  function homeThenWatchDom(mainPaused: boolean) {
+    document.title = "Some Video - YouTube";
+    document.body.innerHTML = `
+      <ytd-watch-flexy video-id="${ID2}"></ytd-watch-flexy>
+      <ytd-video-masthead-ad-primary-video-renderer><div id="masthead-player"></div></ytd-video-masthead-ad-primary-video-renderer>
+      <ytd-player><div id="movie_player" class="html5-video-player"></div></ytd-player>
+      <ytd-video-preview><div id="inline-preview-player"></div></ytd-video-preview>
+      <ytd-watch-metadata><h1><yt-formatted-string>Some Video</yt-formatted-string></h1><ytd-channel-name><div id="text"><a>Chan</a></div></ytd-channel-name></ytd-watch-metadata>`;
+    document.querySelector("#masthead-player")!.appendChild(mkVideo(null, { paused: true, duration: NaN }));
+    document.querySelector("#movie_player")!.appendChild(mkVideo(null, { paused: mainPaused }));
+    document.querySelector("#inline-preview-player")!.appendChild(mkVideo(null, { paused: true, duration: NaN }));
+  }
+  const yt = new YouTubeProvider();
+  it("reports the real player (playing), not the paused masthead/preview players that come first in the page", () => {
+    homeThenWatchDom(false);
+    expect(yt.read(env(`https://www.youtube.com/watch?v=${ID2}`))!.playbackState).toBe("playing");
+  });
+  it("still reports paused when the real player is paused", () => {
+    homeThenWatchDom(true);
+    expect(yt.read(env(`https://www.youtube.com/watch?v=${ID2}`))!.playbackState).toBe("paused");
+  });
+  it("if only the excluded players exist it falls back instead of failing", () => {
+    document.body.innerHTML = `<ytd-video-preview><div id="inline-preview-player"></div></ytd-video-preview>`;
+    document.querySelector("#inline-preview-player")!.appendChild(mkVideo(null, { paused: true }));
+    expect(pickVideo(document)).not.toBeNull();
+  });
+  it("Shorts: uses the active Short's video, not a neighbouring one", () => {
+    document.title = "A Short - YouTube";
+    document.body.innerHTML = `<ytd-reel-video-renderer id="prev"></ytd-reel-video-renderer>
+      <ytd-reel-video-renderer is-active id="cur"><h2>A Short</h2></ytd-reel-video-renderer><ytd-reel-video-renderer id="next"></ytd-reel-video-renderer>`;
+    for (const [id, paused] of [["prev", true], ["cur", false], ["next", true]] as const) document.querySelector("#" + id)!.appendChild(mkVideo(null, { paused, duration: 30 }));
+    expect(yt.read(env(`https://www.youtube.com/shorts/${ID2}`))!.playbackState).toBe("playing");
+  });
+});
