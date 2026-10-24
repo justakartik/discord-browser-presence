@@ -5,7 +5,7 @@ import {
   isFromContentScript, isFromExtensionPage, parseContentMessage, parseUiMessage, senderMatchesSource,
   type PopupState,
 } from "../services/messages";
-import { syncWebScripts } from "./webScripts";
+import { injectIntoOpenTabs, syncWebScripts } from "./webScripts";
 
 const version = chrome.runtime.getManifest().version;
 let manager: PresenceManager | null = null;
@@ -85,9 +85,11 @@ chrome.runtime.onMessage.addListener((raw, sender, sendResponse) => {
 });
 
 // Site access is granted per site by the user; keep the dynamic content script in step with it.
-chrome.permissions.onAdded.addListener(() => void syncWebScripts());
+chrome.permissions.onAdded.addListener(() => void syncWebScripts().then(() => injectIntoOpenTabs({ youtube: false, web: true })));
 chrome.permissions.onRemoved.addListener(() => void syncWebScripts());
-chrome.runtime.onInstalled.addListener(() => void syncWebScripts());
+chrome.runtime.onInstalled.addListener(
+  () => void syncWebScripts().then(() => injectIntoOpenTabs({ youtube: true, web: true })),
+);
 chrome.runtime.onStartup.addListener(() => void syncWebScripts());
 
 chrome.tabs.onRemoved.addListener((tabId) => { void init().then((m) => m.remove(tabId)); });

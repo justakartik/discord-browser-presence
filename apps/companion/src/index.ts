@@ -73,7 +73,12 @@ function runHost() {
     process.stdin,
     process.stdout,
     (m) => {
-      dlog(`recv ${(m as { type?: string } | undefined)?.type ?? "invalid"}`);
+      const msg = m as { type?: string; activity?: { source?: string; paused?: boolean; startMs?: number; endMs?: number } } | undefined;
+      const a = msg?.type === "setActivity" ? msg.activity : undefined;
+      dlog(
+        `recv ${msg?.type ?? "invalid"}` +
+          (a ? ` source=${a.source} paused=${a.paused === true} timer=${a.startMs !== undefined}${a.endMs !== undefined ? "+end" : ""}` : ""),
+      );
       host.handle(m);
     },
     (err) => {

@@ -22,6 +22,11 @@ if (provider) {
       }
     },
   });
+  // Re-injection (extension reload/update, or automatic injection into open tabs) must replace the previous,
+  // possibly orphaned, instance instead of running two monitors in one tab.
+  const w = window as unknown as { __jpMonitor?: { stop(): void } };
+  try { w.__jpMonitor?.stop(); } catch { /* orphaned instance: its context is gone */ }
+  w.__jpMonitor = monitor;
   monitor.start();
   addEventListener("pagehide", () => monitor.stop());
 }

@@ -43,6 +43,9 @@ for (const e of ["mousemove", "keydown", "scroll", "click", "touchstart", "wheel
   addEventListener(e, touch, { passive: true, capture: true });
 }
 
+const win = window as unknown as { __jpWebMonitor?: { stop(): void } };
+try { win.__jpWebMonitor?.stop(); } catch { /* orphaned instance */ }
+win.__jpWebMonitor = monitor;
 void loadSettings().then((s) => {
   settings = s;
   monitor.start();

@@ -53,7 +53,7 @@ export function WebSection({ settings, update }: Props) {
     if (on) {
       const r = await requestAccess(originPatterns(site));
       setSite(site.id, r.ok);
-      setNotice(r.ok ? `${site.name} enabled. Reload open ${site.name} tabs once.` : why(r));
+      setNotice(r.ok ? `${site.name} enabled.` : why(r));
     } else {
       setSite(site.id, false);
       try { await chrome.permissions.remove({ origins: originPatterns(site) }); } catch { /* ignore */ }
@@ -69,7 +69,7 @@ export function WebSection({ settings, update }: Props) {
         ...s,
         web: { ...s.web, enabled: true, sites: Object.fromEntries(SITES.map((x) => [x.id, true])) },
       }));
-      setNotice("Popular sites enabled. Reload open tabs once.");
+      setNotice("Popular sites enabled.");
     } else setNotice(why(r));
     await refresh();
   }
@@ -78,7 +78,7 @@ export function WebSection({ settings, update }: Props) {
     if (on) {
       const r = await requestAccess([ALL_SITES_PATTERN]);
       update((s) => ({ ...s, web: { ...s.web, allSites: r.ok } }));
-      setNotice(r.ok ? "All other sites enabled (domain only). Reload open tabs once." : why(r));
+      setNotice(r.ok ? "All other sites enabled (domain only)." : why(r));
     } else {
       update((s) => ({ ...s, web: { ...s.web, allSites: false } }));
       try { await chrome.permissions.remove({ origins: [ALL_SITES_PATTERN] }); } catch { /* ignore */ }

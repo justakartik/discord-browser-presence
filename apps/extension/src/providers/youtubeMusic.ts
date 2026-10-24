@@ -16,7 +16,10 @@ const ART = [
 /** "Artist • Album • 2020" or "Artist1 & Artist2 • Album". */
 export function parseByline(raw: string | undefined): { artist?: string; album?: string } {
   if (!raw) return {};
-  const parts = raw.split("•").map((p) => p.trim()).filter(Boolean);
+  const parts = raw
+    .split("•")
+    .map((p) => p.trim())
+    .filter((p) => p && !/\b(views?|likes?|plays?|subscribers?|listeners?)\b/i.test(p));
   const artist = parts[0];
   const album = parts[1] && !/^\d{4}$/.test(parts[1]) ? parts[1] : undefined;
   return { artist, album };

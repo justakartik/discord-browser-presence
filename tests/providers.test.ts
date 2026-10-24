@@ -98,6 +98,9 @@ describe("YouTubeMusicProvider", () => {
     expect(parseByline("Artist • Album • 2020")).toEqual({ artist: "Artist", album: "Album" });
     expect(parseByline("A & B")).toEqual({ artist: "A & B", album: undefined });
     expect(parseByline("A • 2020")).toEqual({ artist: "A", album: undefined });
+    // video-type tracks: "Artist • 1.8B views • 19M likes" has no album
+    expect(parseByline("Rick Astley • 1.8B views • 19M likes")).toEqual({ artist: "Rick Astley", album: undefined });
+    expect(parseByline("Artist • Album • 3.2M plays")).toEqual({ artist: "Artist", album: "Album" });
   });
   it("extracts title/artist/album/artwork (upgraded)/times", () => {
     page("Song", "Artist • Album • 2021");

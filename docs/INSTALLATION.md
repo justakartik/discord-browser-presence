@@ -18,7 +18,7 @@ Optional Discord art assets (per application, Rich Presence → Art Assets, from
 No "start on boot" is needed: the browser launches the companion when you open it and stops it when you close it.
 
 ## Other websites
-Open the extension settings (gear in the popup) -> *Other websites*, then enable the sites you want or click *Enable all*. Chrome asks for permission per site. Reload open tabs of that site once. See the README for what is (and is never) shared.
+Open the extension settings (gear in the popup) -> *Other websites*, then enable the sites you want or click *Enable all*. Chrome asks for permission per site. Open tabs are picked up automatically. See the README for what is (and is never) shared.
 
 ## Uninstall
 ```bash

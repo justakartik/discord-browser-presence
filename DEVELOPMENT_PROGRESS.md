@@ -18,6 +18,9 @@ Statuses: Not started · In progress · Implemented · Tested · Blocked. "Teste
 | Docs | Implemented | docs/, README | — | — |
 | Dependency audit | Tested | — | `pnpm audit`: none known | — |
 
+## "Shows paused while playing" investigation (2026-10-24)
+Live checks on real YouTube and YouTube Music pages (built content script + stubbed chrome): state detection is correct (playing/paused/ads/transitions), one <video> element each. Likely cause of the report: after an extension reload, tabs that were already open kept a dead old content script and never got the new one until refreshed, so a paused tab could be the only one reporting. Fixes: background now injects the content scripts into already-open YouTube tabs and granted-site tabs on install/reload and on permission grants, and a new injection stops any previous instance (verified live: 3 re-injections leave exactly 1 live monitor). Also: companion log now records source/paused/timer flags (never titles); YouTube Music byline no longer treats "1.8B views" as the album. **Not confirmed with the user's real Chrome yet**; if it still happens, host.log now shows exactly which state was sent.
+
 ## Streaming sites: title + progress (2026-10-24)
 Status: Implemented; logic Tested with simulated players (20 tests in tests/ott.test.ts: title selectors, Media Session and tab-title fallbacks, trailer/ad filtering, paused/hidden/idle rules, title/progress switches, activity + Discord mapping). **Not verified on the real sites** (no accounts/DRM access here): the Netflix/Prime title selectors are best-effort and may need adjusting; other sites rely on Media Session / tab title. Next: check each site on a real machine and adjust `player` hints in packages/shared/src/sites.ts.
 
