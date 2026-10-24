@@ -1,11 +1,12 @@
-# Justakartik Browser Presence
+# Discord Browser Presence
 
-Spotify-style Discord activity for **YouTube**, **YouTube Music**, streaming sites (Netflix, Prime Video, ...) and, privately, the rest of your browsing (WhatsApp, Instagram, ...): title, channel/artist, real thumbnail/album art and a progress bar, updated automatically and processed locally.
+**by [Justakartik](https://github.com/justakartik)**
 
-Made by **Justakartik**.
+Show what you do in your browser as your Discord status. Spotify-style activity for **YouTube**, **YouTube Music**, streaming sites (Netflix, Prime Video, ...) and, privately, the rest of your browsing (WhatsApp, Instagram, ...): title, channel/artist, real thumbnail/album art and a progress bar, updated automatically and processed locally.
+
 
 ```
-YouTube / YouTube Music tab ──► Chrome extension (MV3) ──native messaging──► companion (jpresence-host.exe) ──local IPC──► Discord desktop
+Browser tab (YouTube, streaming, websites) ──► Chrome extension (MV3) ──native messaging──► companion (jpresence-host.exe) ──local IPC──► Discord desktop
 ```
 
 Why a companion? Discord only accepts Rich Presence over a *local* named pipe; a browser extension cannot open one, and Discord OAuth2 does not allow changing presence of a user account. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
@@ -13,18 +14,18 @@ Why a companion? Discord only accepts Rich Presence over a *local* named pipe; a
 ## One-line install (Windows, Chrome or Edge)
 Open **Windows PowerShell** and run:
 ```powershell
-irm https://raw.githubusercontent.com/justakartik/Youtube-Discord-Presence/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/justakartik/discord-browser-presence/main/install.ps1 | iex
 ```
 It downloads the latest release, verifies its SHA-256 checksums, installs the companion (the Discord application IDs are built in), unpacks the extension to `%LOCALAPPDATA%\Justakartik\Presence\extension` and opens `chrome://extensions`. Chrome doesn't let scripts add extensions, so the last step is yours: turn on *Developer mode*, click *Load unpacked*, and choose that folder (the path is copied to your clipboard). Run the same command again to update, then click reload on the extension.
 
 Remove everything with:
 ```powershell
-irm https://raw.githubusercontent.com/justakartik/Youtube-Discord-Presence/main/uninstall.ps1 | iex
+irm https://raw.githubusercontent.com/justakartik/discord-browser-presence/main/uninstall.ps1 | iex
 ```
 Prefer to read a script before running it? Open [install.ps1](install.ps1) first; it is short.
 
 ## Manual download & setup (Windows, Chrome or Edge)
-1. Open the [latest release](https://github.com/justakartik/Youtube-Discord-Presence/releases/latest) and download:
+1. Open the [latest release](https://github.com/justakartik/discord-browser-presence/releases/latest) and download:
    - `JustakartikPresence.exe`
    - `justakartik-presence-extension.zip`
 2. **Install the companion:** double-click `JustakartikPresence.exe`. A console window confirms the install and waits for a key press. No admin rights are needed. Windows SmartScreen may warn because the exe is unsigned: click *More info → Run anyway*.

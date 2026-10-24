@@ -3,7 +3,7 @@
 Prerequisite: Discord **desktop** app running (not the web client). Node.js is **not** needed.
 
 ## Quick install (from GitHub Releases)
-1. Download from the [latest release](https://github.com/justakartik/Youtube-Discord-Presence/releases/latest):
+1. Download from the [latest release](https://github.com/justakartik/discord-browser-presence/releases/latest):
    - `JustakartikPresence.exe` — double-click it (or run `JustakartikPresence.exe --install`). It installs the companion for your user and registers it with Chrome/Edge. No admin rights. Windows SmartScreen may warn because the exe is unsigned: *More info → Run anyway*.
    - `justakartik-presence-extension.zip` — unzip to a permanent folder, open `chrome://extensions`, enable *Developer mode* → *Load unpacked* → pick the folder. The extension ID is pinned and matches the companion.
 2. In Discord: *User Settings → Activity Privacy* → enable "Share your detected activities".

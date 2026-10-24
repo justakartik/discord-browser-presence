@@ -16,7 +16,7 @@ export type HostOptions = {
   onSent?: (payload: Record<string, unknown>, response: unknown) => void;
 };
 
-export const GITHUB_URL = "https://github.com/justakartik/Youtube-Discord-Presence";
+export const GITHUB_URL = "https://github.com/justakartik/discord-browser-presence";
 
 export function toDiscordActivity(a: ActivityPayload): Record<string, unknown> {
   const act: Record<string, unknown> = {

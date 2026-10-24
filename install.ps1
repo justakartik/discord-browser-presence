@@ -1,14 +1,14 @@
 <#
   Justakartik Browser Presence - one-line installer (Windows, per-user, no admin).
 
-    irm https://raw.githubusercontent.com/justakartik/Youtube-Discord-Presence/main/install.ps1 | iex
+    irm https://raw.githubusercontent.com/justakartik/discord-browser-presence/main/install.ps1 | iex
 
   Downloads the latest GitHub release, verifies SHA-256, installs the companion (Discord application IDs are
   built in) and unpacks the browser extension. Re-run it any time to update.
 #>
 param(
   [string]$Version = "latest",
-  [string]$Repo = "justakartik/Youtube-Discord-Presence"
+  [string]$Repo = "justakartik/discord-browser-presence"
 )
 $ErrorActionPreference = "Stop"
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12

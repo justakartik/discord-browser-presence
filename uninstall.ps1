@@ -1,7 +1,7 @@
 <#
   Removes the Justakartik Browser Presence companion, its native-host registration and the unpacked extension.
 
-    irm https://raw.githubusercontent.com/justakartik/Youtube-Discord-Presence/main/uninstall.ps1 | iex
+    irm https://raw.githubusercontent.com/justakartik/discord-browser-presence/main/uninstall.ps1 | iex
 
   Afterwards, remove the extension itself in chrome://extensions.
 #>

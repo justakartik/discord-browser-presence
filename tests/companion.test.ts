@@ -189,7 +189,7 @@ describe("mapping/config", () => {
     const m: any = toDiscordActivity({ source: "youtube-music", type: 2, details: "d", url: "https://music.youtube.com/watch?v=dQw4w9WgXcQ" } as any);
     expect(m.buttons).toEqual([
       { label: "Listen Along", url: "https://music.youtube.com/watch?v=dQw4w9WgXcQ" },
-      { label: "GitHub", url: "https://github.com/justakartik/Youtube-Discord-Presence" },
+      { label: "GitHub", url: "https://github.com/justakartik/discord-browser-presence" },
     ]);
     const y: any = toDiscordActivity({ source: "youtube", type: 3, details: "d", url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ" } as any);
     expect(y.buttons[0].label).toBe("Watch Along");
